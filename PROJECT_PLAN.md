@@ -5,24 +5,24 @@
 **Repository**: `nis2shield/dotnet-nis2-shield`
 
 ## 1. Vision
-Portare la compliance NIS2 nell'ecosistema Microsoft Enterprise, integrandosi nativamente come Middleware nel pipeline di ASP.NET Core. Deve supportare l'ecosistema esistente (Dependency Injection, `appsettings.json`, `ILogger`).
+Bring NIS2 compliance to the Microsoft Enterprise ecosystem by integrating natively as Middleware in the ASP.NET Core pipeline. It must support the existing ecosystem (Dependency Injection, `appsettings.json`, `ILogger`).
 
 ## 2. Core Features
 
 ### A. Middleware Pipeline (`Nis2Middleware`) ✅
-- Intercettazione Request/Response.
-- **Forensic Logging**: Serializzazione log in JSON strutturato.
-- **HMAC Signing**: Firma di integrità su ogni log (Art. 21.2.h).
-- **PII Encryption**: Integrazione con opzioni per cifrare campi sensibili (Email, UserID).
+- Request/Response interception.
+- **Forensic Logging**: Log serialization in structured JSON.
+- **HMAC Signing**: Integrity signature on every log (Art. 21.2.h).
+- **PII Encryption**: Integration with options to encrypt sensitive fields (Email, UserID).
 
 ### B. Configuration (`appsettings.json`) ✅
-- Binding fortemente tipizzato su classe `Nis2Options`.
-- Supporto per Secret Manager (UserSecrets/KeyVault) per le chiavi.
+- Strongly typed binding on `Nis2Options` class.
+- Support for Secret Manager (UserSecrets/KeyVault) for keys.
 
 ### C. Active Defense ✅
-- **Rate Limiting**: Sliding Window Rate Limiter in-memory.
-- **Block List**: Blocco IP Tor exit nodes con aggiornamento automatico.
-- **Session Guard**: Rilevamento session hijacking via IP/User-Agent.
+- **Rate Limiting**: In-memory Sliding Window Rate Limiter.
+- **Block List**: Tor exit nodes IP blocking with automatic updates.
+- **Session Guard**: Session hijacking detection via IP/User-Agent.
 
 ### D. Multi-SIEM Integration ✅
 - Elasticsearch (Bulk API)
@@ -37,24 +37,24 @@ Portare la compliance NIS2 nell'ecosistema Microsoft Enterprise, integrandosi na
 
 ## 3. Architecture
 
-Sfruttiamo i costrutti nativi di .NET 8 per massimizzare le performance e l'adozione:
+We leverage native .NET 8 constructs to maximize performance and adoption:
 
-- **Logging**: Scriviamo su `ILogger` con payload JSON firmato HMAC.
-- **DI**: Tutti i servizi registrati nel container via extension methods.
-- **HttpClient**: Factory pattern per SIEM e Webhook connectors.
+- **Logging**: Write to `ILogger` with HMAC-signed JSON payload.
+- **DI**: All services registered in the container via extension methods.
+- **HttpClient**: Factory pattern for SIEM and Webhook connectors.
 
 ## 4. Roadmap
 
 ### Phase 1: Core & Logging ✅ COMPLETE
-- [x] Setup Solution (`sln`) e Project (`csproj`).
-- [x] Implementazione `Nis2Middleware` di base.
-- [x] Configurazione Options Pattern (`services.Configure<Nis2Options>`).
-- [x] JSON Structured Logging con HMAC.
+- [x] Setup Solution (`sln`) and Project (`csproj`).
+- [x] Basic `Nis2Middleware` implementation.
+- [x] Options Pattern Configuration (`services.Configure<Nis2Options>`).
+- [x] JSON Structured Logging with HMAC.
 
 ### Phase 2: Active Defense ✅ COMPLETE
-- [x] Integrazione Rate Limiting policy (Sliding Window).
+- [x] Rate Limiting policy integration (Sliding Window).
 - [x] IP Blocking Middleware (Tor Exit Nodes).
-- [x] Session Guard per rilevamento hijacking.
+- [x] Session Guard for hijacking detection.
 
 ### Phase 3: Multi-SIEM & Notifications ✅ COMPLETE
 - [x] Elasticsearch Connector.
@@ -64,9 +64,9 @@ Sfruttiamo i costrutti nativi di .NET 8 per massimizzare le performance e l'adoz
 
 ### Phase 4: NuGet & Distribution ✅ COMPLETE
 - [x] CD Pipeline (`dotnet pack`).
-- [x] Pubblicazione su NuGet.org.
-- [x] README e Esempi (`Program.cs`).
-- [x] Demo App funzionante.
+- [x] Publication on NuGet.org.
+- [x] README and Examples (`Program.cs`).
+- [x] Working Demo App.
 
 ### Phase 5: Community & Documentation ✅ COMPLETE
 - [x] CHANGELOG.md
@@ -77,13 +77,13 @@ Sfruttiamo i costrutti nativi di .NET 8 per massimizzare le performance e l'adoz
 - [x] CI Workflow (test.yml)
 
 ## 5. Ecosystem Integration
-- Deve produrre log identici a Django/Spring per essere digerito dalla stessa infrastruttura (`fluent-bit`).
+- Must produce logs identical to Django/Spring to be digested by the same infrastructure (`fluent-bit`).
 
 ---
 
-## 🚀 v0.2.0 - RELEASED (1 Gennaio 2026)
+## 🚀 v0.2.0 - RELEASED (January 1, 2026)
 
-Il progetto **Nis2Shield.AspNetCore v0.2.0** include tutte le features di Active Defense, Multi-SIEM e Webhooks!
+The **Nis2Shield.AspNetCore v0.2.0** project includes all Active Defense, Multi-SIEM, and Webhooks features!
 
 ```bash
 dotnet add package Nis2Shield.AspNetCore --version 0.2.0
