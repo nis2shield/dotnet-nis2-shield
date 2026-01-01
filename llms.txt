@@ -1,0 +1,40 @@
+# Nis2Shield.AspNetCore
+
+> Security-First Middleware for ASP.NET Core NIS2 Compliance
+
+## What is this?
+A NuGet package that adds NIS2 compliance features to ASP.NET Core applications:
+- **Forensic Logging**: HMAC-SHA256 signed JSON logs
+- **PII Protection**: Automatic IP anonymization and field encryption
+- **Active Defense**: Rate limiting, session guard, Tor blocking
+
+## Quick Setup
+
+```csharp
+// Program.cs
+builder.Services.AddNis2Shield(builder.Configuration);
+app.UseNis2Shield();
+```
+
+```json
+// appsettings.json
+{
+  "Nis2": {
+    "IntegrityKey": "your-hmac-key",
+    "Logging": { "Enabled": true, "AnonymizeIp": true }
+  }
+}
+```
+
+## Core Components
+- `Nis2Middleware`: Main pipeline component
+- `ForensicLogger`: Creates signed log entries
+- `Nis2Options`: Configuration via appsettings.json
+
+## NIS2 Articles Addressed
+- Art. 21.2.h: Cryptographic integrity
+- Art. 21.2.e: Rate limiting for DoS prevention
+- Art. 21.2.a: Session hijacking detection
+
+## Ecosystem
+Part of NIS2 Shield: Django, Spring, Express, React, Infrastructure.
