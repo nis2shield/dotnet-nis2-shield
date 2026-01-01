@@ -7,6 +7,8 @@ A NuGet package that adds NIS2 compliance features to ASP.NET Core applications:
 - **Forensic Logging**: HMAC-SHA256 signed JSON logs
 - **PII Protection**: Automatic IP anonymization and field encryption
 - **Active Defense**: Rate limiting, session guard, Tor blocking
+- **Multi-SIEM**: Native Elasticsearch, Splunk HEC, Datadog connectors
+- **Webhooks**: Real-time alerts to Slack, Teams, Discord
 
 ## Quick Setup
 
@@ -21,7 +23,9 @@ app.UseNis2Shield();
 {
   "Nis2": {
     "IntegrityKey": "your-hmac-key",
-    "Logging": { "Enabled": true, "AnonymizeIp": true }
+    "Logging": { "Enabled": true, "AnonymizeIp": true },
+    "ActiveDefense": { "RateLimitEnabled": true, "BlockTorExitNodes": true },
+    "SessionGuard": { "Enabled": true, "SubnetTolerance": 24 }
   }
 }
 ```
@@ -29,12 +33,50 @@ app.UseNis2Shield();
 ## Core Components
 - `Nis2Middleware`: Main pipeline component
 - `ForensicLogger`: Creates signed log entries
-- `Nis2Options`: Configuration via appsettings.json
+- `SessionGuard`: Detects session hijacking
+- `RateLimiter`: Sliding window rate limiting
+- `TorBlocker`: Blocks Tor exit nodes
+- `ISiemConnector`: Interface for SIEM integration
+- `IWebhookNotifier`: Interface for webhook notifications
+
+## SIEM Configuration
+```json
+{
+  "Nis2": {
+    "Siem": {
+      "Enabled": true,
+      "Provider": "Splunk",
+      "Endpoint": "https://splunk:8088/services/collector",
+      "ApiKey": "your-hec-token"
+    }
+  }
+}
+```
+
+## Webhook Configuration
+```json
+{
+  "Nis2": {
+    "Webhooks": {
+      "Enabled": true,
+      "Targets": [
+        {
+          "Name": "Slack Alerts",
+          "Url": "https://hooks.slack.com/xxx",
+          "Provider": "Slack",
+          "Events": ["rate_limit_exceeded", "tor_node_blocked"]
+        }
+      ]
+    }
+  }
+}
+```
 
 ## NIS2 Articles Addressed
-- Art. 21.2.h: Cryptographic integrity
+- Art. 21.2.h: Cryptographic integrity (HMAC-SHA256)
 - Art. 21.2.e: Rate limiting for DoS prevention
 - Art. 21.2.a: Session hijacking detection
+- Art. 21.2.g: PII encryption and anonymization
 
 ## Ecosystem
 Part of NIS2 Shield: Django, Spring, Express, React, Infrastructure.

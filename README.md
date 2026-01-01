@@ -3,6 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/Nis2Shield.AspNetCore.svg)](https://www.nuget.org/packages/Nis2Shield.AspNetCore/)
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4.svg)](https://dotnet.microsoft.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build](https://img.shields.io/github/actions/workflow/status/nis2shield/dotnet-nis2-shield/test.yml?branch=main)](https://github.com/nis2shield/dotnet-nis2-shield/actions)
 
 ### 🛡️ Security-First Middleware for ASP.NET Core NIS2 Compliance
 
@@ -11,7 +12,7 @@ Companies subject to NIS2 Directive need **demonstrable compliance**. This middl
 1.  **Forensic logging** with HMAC-SHA256 integrity and PII encryption (Art. 21.2.h)
 2.  **Rate limiting** to prevent DoS/Brute Force attacks (Art. 21.2.e)
 3.  **Session Guard** to detect hijacking via IP/User-Agent validation (Art. 21.2.a)
-4.  **Multi-SIEM Presets**: Ready-to-use configs for Splunk, Datadog, Elasticsearch.
+4.  **Multi-SIEM Presets**: Native connectors for Splunk, Datadog, Elasticsearch
 
 > **Part of the NIS2 Shield Ecosystem**: Use with [`@nis2shield/react-guard`](https://github.com/nis2shield/react-guard) for client-side protection and [`nis2shield/infrastructure`](https://github.com/nis2shield/infrastructure) for a full-stack, audited implementation.
 
@@ -30,7 +31,7 @@ Companies subject to NIS2 Directive need **demonstrable compliance**. This middl
 │  **Nis2Shield.AspNetCore**                                  │
 │  ├── ForensicLogger (HMAC signed logs)                     │
 │  ├── RateLimiter, SessionGuard, TorBlocker                 │
-│  └── → SIEM (Elasticsearch, Splunk, QRadar, etc.)          │
+│  └── → SIEM (Elasticsearch, Splunk, Datadog)               │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
@@ -77,7 +78,6 @@ app.Run();
   "Nis2": {
     "Enabled": true,
     "IntegrityKey": "your-hmac-secret-key",
-    "EncryptionKey": "your-aes-base64-key",
     "Logging": {
       "Enabled": true,
       "AnonymizeIp": true,
@@ -88,6 +88,11 @@ app.Run();
       "RateLimitThreshold": 100,
       "RateLimitWindowSeconds": 60,
       "BlockTorExitNodes": true
+    },
+    "SessionGuard": {
+      "Enabled": true,
+      "SubnetTolerance": 24,
+      "AllowUserAgentChange": false
     }
   }
 }
@@ -116,15 +121,22 @@ app.Run();
 
 ## 📖 Recipes
 
-### Banking App with Rate Limiting
+### Banking App with Strict Security
 
 ```csharp
 builder.Services.AddNis2Shield(options =>
 {
     options.IntegrityKey = Environment.GetEnvironmentVariable("NIS2_HMAC_KEY")!;
+    
+    // Rate Limiting
     options.ActiveDefense.RateLimitEnabled = true;
     options.ActiveDefense.RateLimitThreshold = 50;
     options.ActiveDefense.RateLimitWindowSeconds = 60;
+    
+    // Session Guard - strict mode
+    options.SessionGuard.Enabled = true;
+    options.SessionGuard.SubnetTolerance = 32; // exact IP match
+    options.SessionGuard.AllowUserAgentChange = false;
 });
 ```
 
@@ -136,7 +148,45 @@ builder.Services.AddNis2Shield(options =>
     options.IntegrityKey = Environment.GetEnvironmentVariable("NIS2_HMAC_KEY")!;
     options.Logging.EncryptPii = true;
     options.Logging.AnonymizeIp = true;
+    options.Logging.PiiFields = new List<string> { "email", "patient_id", "ssn" };
 });
+```
+
+### Enterprise with Splunk HEC
+
+```json
+{
+  "Nis2": {
+    "IntegrityKey": "your-hmac-key",
+    "Siem": {
+      "Enabled": true,
+      "Provider": "Splunk",
+      "Endpoint": "https://splunk.company.com:8088/services/collector",
+      "ApiKey": "your-hec-token",
+      "IndexName": "nis2-security"
+    }
+  }
+}
+```
+
+### Slack Alert for Security Events
+
+```json
+{
+  "Nis2": {
+    "Webhooks": {
+      "Enabled": true,
+      "Targets": [
+        {
+          "Name": "Security Alerts",
+          "Url": "https://hooks.slack.com/services/xxx/yyy/zzz",
+          "Provider": "Slack",
+          "Events": ["rate_limit_exceeded", "tor_node_blocked", "session_hijack_detected"]
+        }
+      ]
+    }
+  }
+}
 ```
 
 ## 🧪 Testing
@@ -151,11 +201,13 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## 🤝 Related Projects
 
-- [django-nis2-shield](https://github.com/nis2shield/django-nis2-shield) - Django middleware
-- [nis2-spring-shield](https://github.com/nis2shield/nis2-spring-shield) - Spring Boot starter
-- [@nis2shield/express-middleware](https://github.com/nis2shield/express-nis2-middleware) - Express middleware
-- [@nis2shield/react-guard](https://github.com/nis2shield/react-guard) - React components
+| Project | Technology | Package |
+|---------|------------|---------|
+| [django-nis2-shield](https://github.com/nis2shield/django-nis2-shield) | Django | `pip install django-nis2-shield` |
+| [nis2-spring-shield](https://github.com/nis2shield/nis2-spring-shield) | Spring Boot | Maven Central |
+| [@nis2shield/express-middleware](https://github.com/nis2shield/express-nis2-middleware) | Express | `npm install @nis2shield/express-middleware` |
+| [@nis2shield/react-guard](https://github.com/nis2shield/react-guard) | React | `npm install @nis2shield/react-guard` |
 
 ---
 
-**[Documentation](https://nis2shield.com)** · **[NuGet](https://www.nuget.org/packages/Nis2Shield.AspNetCore/)** · **[Changelog](CHANGELOG.md)**
+**[Documentation](https://nis2shield.com/dotnet-shield/)** · **[NuGet](https://www.nuget.org/packages/Nis2Shield.AspNetCore/)** · **[Changelog](CHANGELOG.md)**
