@@ -4,10 +4,34 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    
+    <!-- NuGet Package Metadata -->
+    <PackageId>Nis2Shield.AspNetCore</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>NIS2 Shield Team</Authors>
+    <Company>NIS2 Shield</Company>
+    <Description>Security-First Middleware for ASP.NET Core NIS2 Compliance. Forensic logging with HMAC-SHA256, PII encryption, rate limiting, and SIEM integration.</Description>
+    <PackageTags>nis2;compliance;security;middleware;aspnetcore;forensic-logging;hmac;gdpr;cybersecurity;enterprise</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/nis2shield/dotnet-nis2-shield</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nis2shield/dotnet-nis2-shield</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    
+    <!-- Build Options -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="../../icon.png" Pack="true" PackagePath="\" Condition="Exists('../../icon.png')" />
   </ItemGroup>
 
 </Project>

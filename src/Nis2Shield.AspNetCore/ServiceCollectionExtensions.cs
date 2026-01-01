@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Nis2Shield.AspNetCore.Configuration;
 using Nis2Shield.AspNetCore.Logging;
+using Nis2Shield.AspNetCore.ActiveDefense;
 
 namespace Nis2Shield.AspNetCore;
 
@@ -20,6 +21,8 @@ public static class ServiceCollectionExtensions
 
         // 2. Register Core Services
         services.AddSingleton<ForensicLogger>();
+        services.AddSingleton<RateLimiter>();
+        services.AddSingleton<TorBlocker>();
         services.AddTransient<Nis2Middleware>();
 
         return services;
@@ -32,6 +35,8 @@ public static class ServiceCollectionExtensions
     {
         services.Configure(configureOptions);
         services.AddSingleton<ForensicLogger>();
+        services.AddSingleton<RateLimiter>();
+        services.AddSingleton<TorBlocker>();
         services.AddTransient<Nis2Middleware>();
         return services;
     }
