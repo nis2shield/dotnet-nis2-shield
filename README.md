@@ -14,12 +14,12 @@ Companies subject to NIS2 Directive need **demonstrable compliance**. This middl
 3.  **Session Guard** to detect hijacking via IP/User-Agent validation (Art. 21.2.a)
 4.  **Multi-SIEM Presets**: Native connectors for Splunk, Datadog, Elasticsearch
 
-> **Part of the NIS2 Shield Ecosystem**: Use with [`@nis2shield/react-guard`](https://github.com/nis2shield/react-guard) for client-side protection and [`nis2shield/infrastructure`](https://github.com/nis2shield/infrastructure) for a full-stack, audited implementation.
+> **Part of the NIS2 Shield Ecosystem**: Use with [`@nis2shield/react-guard`](https://github.com/nis2shield/react-guard), [`@nis2shield/angular-guard`](https://github.com/nis2shield/angular-guard), or [`@nis2shield/vue-guard`](https://github.com/nis2shield/vue-guard) for client-side protection and [`nis2shield/infrastructure`](https://github.com/nis2shield/infrastructure) for a full-stack implementation.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        Frontend                              │
-│  @nis2shield/react-guard                                    │
+│  @nis2shield/{react,angular,vue}-guard                      │
 │  ├── SessionWatchdog (idle detection)                       │
 │  ├── AuditBoundary (crash reports)                         │
 │  └── → POST /api/nis2/telemetry/                           │
