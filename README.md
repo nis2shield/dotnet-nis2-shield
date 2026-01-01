@@ -100,10 +100,19 @@ app.Run();
 - Automatic PII field encryption (GDPR compliant)
 - IP anonymization for privacy compliance
 
-### Active Defense (Coming Soon)
-- **Rate Limiting**: Protection against application-level DoS attacks
-- **Session Guard**: Session hijacking prevention
+### Active Defense
+- **Rate Limiting**: Sliding window protection against application-level DoS attacks
+- **Session Guard**: Session hijacking prevention via IP/User-Agent fingerprinting
 - **Tor Blocker**: Automatic blocking of Tor exit nodes
+
+### Multi-SIEM Integration
+- **Elasticsearch**: Bulk API with daily index rotation
+- **Splunk**: HTTP Event Collector (HEC) support
+- **Datadog**: Logs API v2 integration
+
+### Webhook Notifications
+- Real-time alerts to **Slack**, **Microsoft Teams**, **Discord**
+- Configurable event filtering
 
 ## 📖 Recipes
 
