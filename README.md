@@ -101,7 +101,7 @@ app.Run();
 ## 🔒 Features
 
 ### Forensic Logging
-- Structured JSON logs with HMAC-SHA256 integrity signature
+- Standardized logs (`NIS2-JSON-SCHEMA v1.0`) with HMAC-SHA256 integrity signature
 - Automatic PII field encryption (GDPR compliant)
 - IP anonymization for privacy compliance
 

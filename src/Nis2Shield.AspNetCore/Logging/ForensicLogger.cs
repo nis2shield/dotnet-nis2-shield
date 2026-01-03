@@ -8,26 +8,39 @@ namespace Nis2Shield.AspNetCore.Logging;
 
 /// <summary>
 /// Structured forensic log entry with HMAC-SHA256 integrity.
-/// Compatible with Django/Spring NIS2 Shield log format.
+/// Matches NIS2-JSON-SCHEMA v1.0.
 /// </summary>
 public class ForensicLogEntry
 {
-    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+    public string Timestamp { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
     public string Level { get; set; } = "INFO";
-    public string Event { get; set; } = string.Empty;
-    public string Path { get; set; } = string.Empty;
-    public string Method { get; set; } = string.Empty;
-    public int StatusCode { get; set; }
-    public string? UserId { get; set; }
-    public string? IpAddress { get; set; }
-    public string? UserAgent { get; set; }
-    public long DurationMs { get; set; }
-    public Dictionary<string, object>? Extra { get; set; }
+    public string Component { get; set; } = "NIS2-SHIELD-DOTNET";
+    public string EventId { get; set; } = "HTTP_ACCESS";
+    public RequestInfo Request { get; set; }
+    public ResponseInfo Response { get; set; }
+    public UserInfo? User { get; set; }
+    public Dictionary<string, object>? Metadata { get; set; }
+    public string? IntegrityHash { get; set; }
+}
 
-    /// <summary>
-    /// HMAC-SHA256 signature of the log payload.
-    /// </summary>
-    public string? Hmac { get; set; }
+public class RequestInfo 
+{
+    public string Method { get; set; } = string.Empty;
+    public string Url { get; set; } = string.Empty;
+    public string Ip { get; set; } = string.Empty;
+    public string UserAgent { get; set; } = string.Empty;
+}
+
+public class ResponseInfo
+{
+    public int Status { get; set; }
+    public long DurationMs { get; set; }
+}
+
+public class UserInfo
+{
+    public string? Id { get; set; }
+    public string? Email { get; set; }
 }
 
 /// <summary>
@@ -60,19 +73,31 @@ public class ForensicLogger
     {
         var entry = new ForensicLogEntry
         {
-            Event = eventName,
-            Path = path,
-            Method = method,
-            StatusCode = statusCode,
-            DurationMs = durationMs,
-            UserId = _options.Logging.EncryptPii ? AnonymizeField(userId) : userId,
-            IpAddress = _options.Logging.AnonymizeIp ? AnonymizeIp(ipAddress) : ipAddress,
-            UserAgent = userAgent,
-            Extra = extra
+            EventId = eventName.ToUpper().Replace(" ", "_"), // Normalize event ID
+            Request = new RequestInfo 
+            {
+                Method = method,
+                Url = path,
+                Ip = _options.Logging.AnonymizeIp ? AnonymizeIp(ipAddress) : (ipAddress ?? "unknown"),
+                UserAgent = userAgent ?? "unknown"
+            },
+            Response = new ResponseInfo
+            {
+                Status = statusCode,
+                DurationMs = durationMs
+            },
+            User = !string.IsNullOrEmpty(userId) ? new UserInfo 
+            { 
+                Id = _options.Logging.EncryptPii ? AnonymizeField(userId) : userId 
+            } : null,
+            Metadata = extra
         };
+        
+        // Map status code to level
+        entry.Level = statusCode >= 500 ? "ERROR" : statusCode >= 400 ? "WARN" : "INFO";
 
         // Sign the entry (exclude the Hmac field itself)
-        entry.Hmac = ComputeHmac(entry);
+        entry.IntegrityHash = ComputeHmac(entry);
 
         return entry;
     }
@@ -85,27 +110,22 @@ public class ForensicLogger
         return JsonSerializer.Serialize(entry, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-            WriteIndented = false
+            WriteIndented = false,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         });
     }
 
     private string ComputeHmac(ForensicLogEntry entry)
     {
-        // Create a copy without Hmac for signing
-        var payload = JsonSerializer.Serialize(new
-        {
-            entry.Timestamp,
-            entry.Level,
-            entry.Event,
-            entry.Path,
-            entry.Method,
-            entry.StatusCode,
-            entry.UserId,
-            entry.IpAddress,
-            entry.UserAgent,
-            entry.DurationMs,
-            entry.Extra
-        }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower });
+        // Serialization for signing (must match schema structure exactly)
+        var options = new JsonSerializerOptions 
+        { 
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        };
+        
+        // Serialize object without IntegrityHash (it is null at this point)
+        var payload = JsonSerializer.Serialize(entry, options);
 
         using var hmac = new HMACSHA256(_keyBytes);
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(payload));
