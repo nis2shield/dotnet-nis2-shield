@@ -7,7 +7,7 @@
     
     <!-- NuGet Package Metadata -->
     <PackageId>Nis2Shield.AspNetCore</PackageId>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Authors>NIS2 Shield Team</Authors>
     <Company>NIS2 Shield</Company>
     <Description>Security-First Middleware for ASP.NET Core NIS2 Compliance. Forensic logging with HMAC-SHA256, PII encryption, rate limiting, and SIEM integration.</Description>

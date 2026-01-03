@@ -36,10 +36,10 @@ public class ForensicLoggerTests
         );
 
         // Assert
-        Assert.NotNull(entry.Hmac);
-        Assert.Equal(64, entry.Hmac.Length); // SHA256 = 64 hex chars
-        Assert.Equal("192.168.1.0", entry.IpAddress); // Anonymized
-        Assert.Equal("***7", entry.UserId); // PII masked
+        Assert.NotNull(entry.IntegrityHash);
+        Assert.Equal(64, entry.IntegrityHash.Length); // SHA256 = 64 hex chars
+        Assert.Equal("192.168.1.0", entry.Request.Ip); // Anonymized
+        Assert.Equal("***7", entry.User?.Id); // PII masked
     }
 
     [Fact]
@@ -64,8 +64,8 @@ public class ForensicLoggerTests
         var json = logger.Serialize(entry);
 
         // Assert
-        Assert.Contains("\"event\":\"test\"", json);
-        Assert.Contains("\"status_code\":201", json);
+        Assert.Contains("\"event_id\":\"TEST\"", json);
+        Assert.Contains("\"status\":201", json);
         Assert.Contains("\"duration_ms\":10", json);
     }
 }

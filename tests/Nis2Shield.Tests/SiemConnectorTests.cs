@@ -16,17 +16,26 @@ public class SiemConnectorTests
     {
         return new ForensicLogEntry
         {
-            Timestamp = DateTime.UtcNow,
+            Timestamp = DateTime.UtcNow.ToString("O"), // ISO 8601
             Level = "INFO",
-            Event = "test_event",
-            Path = "/api/test",
-            Method = "GET",
-            StatusCode = 200,
-            UserId = "user123",
-            IpAddress = "192.168.1.100",
-            UserAgent = "Mozilla/5.0",
-            DurationMs = 42,
-            Hmac = "abc123"
+            EventId = "test_event",
+            Request = new RequestInfo
+            {
+                Url = "/api/test",
+                Method = "GET",
+                Ip = "192.168.1.100",
+                UserAgent = "Mozilla/5.0"
+            },
+            Response = new ResponseInfo
+            {
+                Status = 200,
+                DurationMs = 42
+            },
+            User = new UserInfo
+            {
+                Id = "user123"
+            },
+            IntegrityHash = "abc123"
         };
     }
 

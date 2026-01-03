@@ -48,7 +48,7 @@ public class SplunkConnector : ISiemConnector
     {
         var hecEvent = new
         {
-            time = new DateTimeOffset(entry.Timestamp).ToUnixTimeSeconds(),
+            time = new DateTimeOffset(DateTime.Parse(entry.Timestamp)).ToUnixTimeSeconds(),
             sourcetype = _options.IndexName,
             source = "nis2-shield",
             @event = entry
@@ -83,7 +83,7 @@ public class SplunkConnector : ISiemConnector
         {
             var hecEvent = new
             {
-                time = new DateTimeOffset(entry.Timestamp).ToUnixTimeSeconds(),
+                time = new DateTimeOffset(DateTime.Parse(entry.Timestamp)).ToUnixTimeSeconds(),
                 sourcetype = _options.IndexName,
                 source = "nis2-shield",
                 @event = entry
