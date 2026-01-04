@@ -4,13 +4,13 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| v0.3.x  | :white_check_mark: |
-| v0.2.x  | :x:                |
-| < v0.2  | :x:                |
+| v1.1.x  | :white_check_mark: |
+| v0.3.x  | :x:                |
+| < v0.3  | :x:                |
 
 ## Reporting a Vulnerability
 
-Please report sensitive security issues via email to **security@nis2shield.com** or by opening a [GitHub Security Advisory](https://github.com/nis2shield/django-nis2-shield/security/advisories/new).
+Please report sensitive security issues via email to **security@nis2shield.com** or by opening a [GitHub Security Advisory](https://github.com/nis2shield/dotnet-nis2-shield/security/advisories/new).
 
 **DO NOT create public GitHub issues for security vulnerabilities.**
 
